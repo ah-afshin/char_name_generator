@@ -3,7 +3,7 @@ from torch import nn
 from treelib import Tree
 
 from train import get_data
-from models import NameGeneratorLSTM
+from model import NameGeneratorLSTM
 
 
 
@@ -15,6 +15,19 @@ def generate(
         n_letters: int = 53,
         max_len: int = 15
     ) -> str:
+    """Generate a name sequence given a starting string using a trained character-level RNN.
+
+    Args:
+        input (str): The starting string for the generated name.
+        model (nn.Module): The trained name generation model (e.g., LSTM or RNN).
+        indx_to_char (dict[int, str]): Mapping from character indices to characters.
+        char_to_indx (dict[str, int]): Mapping from characters to indices.
+        n_letters (int): Total number of unique letters (including <EOS> token). Default is 53.
+        max_len (int): Maximum length of the generated name. Default is 15.
+
+    Returns:
+        str: The generated name (without <EOS>).
+    """
     model.eval()
 
     h_c = None # for first time in the loop
@@ -41,6 +54,21 @@ def generate(
 
 
 def build_tree_with_treelib(model, start_letter, char_to_indx, indx_to_char, n_letters, max_depth=3, topk=3):
+    """Build a tree of possible name continuations from a given starting letter,
+    showing the top-k predictions at each step up to a certain depth.
+
+    Args:
+        model (nn.Module): The trained name generation model.
+        start_letter (str): The initial character to begin generation from.
+        char_to_indx (dict[str, int]): Mapping from characters to indices.
+        indx_to_char (dict[int, str]): Mapping from indices to characters.
+        n_letters (int): Total number of unique characters.
+        max_depth (int): Maximum depth of the tree (i.e., how many characters to generate). Default is 3.
+        topk (int): Number of top probable characters to consider at each step. Default is 3.
+
+    Returns:
+        Tree: A `treelib.Tree` object representing the generated sequence space.
+    """
     model.eval()
     tree = Tree()
     root = start_letter
@@ -70,6 +98,10 @@ def build_tree_with_treelib(model, start_letter, char_to_indx, indx_to_char, n_l
 
 
 def main():
+    """
+    Entry point for generating a name tree using a trained model.
+    Prompts the user for an input character and displays a tree of possible name sequences.
+    """
     model_0 = NameGeneratorLSTM()
     model_0.load_state_dict(t.load(f="./models/model_0.pth"))
     _, indx_to_char, char_to_indx, n_letters = get_data()
