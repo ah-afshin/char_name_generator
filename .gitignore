@@ -10,3 +10,5 @@ models/
 
 .DS_Store
 Thumbs.db
+
+tests.ipynb
