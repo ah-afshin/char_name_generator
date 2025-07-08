@@ -37,3 +37,8 @@ Visualize model's top predictions step by step:
 ```bash
 python generate.py
 ```
+
+---
+
+This project was created for learning purposes. I’ve tried to write clear and well-documented code.
+If you notice any issues or have suggestions, please let me know! 🌱
